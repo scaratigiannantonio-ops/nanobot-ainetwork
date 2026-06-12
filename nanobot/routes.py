@@ -2,14 +2,12 @@ from aiohttp import web
 import os
 import openai
 import replicate
-import json
 
 async def handle_generate(request: web.Request) -> web.Response:
     """POST /api/generate"""
     try:
         body = await request.json()
         prompt = body.get("prompt", "")
-        provider = body.get("provider", "deepseek")
     except Exception:
         return web.json_response({"error": "Invalid JSON"}, status=400)
 
@@ -29,7 +27,11 @@ async def handle_generate(request: web.Request) -> web.Response:
     )
     
     text = response.choices[0].message.content
-    return web.json_response({"text": text, "provider": "deepseek"})
+    resp = web.json_response({"text": text, "provider": "deepseek"})
+    resp.headers["Access-Control-Allow-Origin"] = "*"
+    resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+    resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    return resp
 
 
 async def handle_avatar(request: web.Request) -> web.Response:
@@ -55,7 +57,20 @@ async def handle_avatar(request: web.Request) -> web.Response:
         }
     )
     
-    return web.json_response({"videoUrl": output})
+    resp = web.json_response({"videoUrl": output})
+    resp.headers["Access-Control-Allow-Origin"] = "*"
+    resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+    resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    return resp
+
+
+async def handle_options(request: web.Request) -> web.Response:
+    """Handle CORS preflight"""
+    resp = web.Response()
+    resp.headers["Access-Control-Allow-Origin"] = "*"
+    resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+    resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    return resp
 
 
 def create_routes_app() -> web.Application:
@@ -63,4 +78,6 @@ def create_routes_app() -> web.Application:
     app = web.Application()
     app.router.add_post("/generate", handle_generate)
     app.router.add_post("/avatar", handle_avatar)
+    app.router.add_options("/generate", handle_options)
+    app.router.add_options("/avatar", handle_options)
     return app
