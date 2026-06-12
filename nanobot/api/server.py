@@ -28,6 +28,7 @@ from nanobot.utils.media_decode import (
     save_base64_data_url as _save_base64_data_url,
 )
 from nanobot.utils.runtime import EMPTY_FINAL_RESPONSE_MESSAGE
+from nanobot.api.routes import create_routes_app
 
 __all__ = (
     "MAX_FILE_SIZE",
