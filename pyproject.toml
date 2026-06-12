@@ -64,6 +64,7 @@ dependencies = [
     "filelock>=3.25.2",
     "boto3>=1.43.0",
     "firebase-admin>=6.0.0",
+    "replicate",
 ]
 
 [project.optional-dependencies]
