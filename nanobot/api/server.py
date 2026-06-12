@@ -397,4 +397,8 @@ def create_app(
     app.router.add_post("/v1/chat/completions", handle_chat_completions)
     app.router.add_get("/v1/models", handle_models)
     app.router.add_get("/health", handle_health)
+        # Mount custom API routes
+    routes_app = create_routes_app()
+    app.add_subapp("/api", routes_app)
+    
     return app
