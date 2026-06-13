@@ -14,6 +14,11 @@ RUN apt-get update && \
 
 WORKDIR /app
 
+# Forza il rebuild della cache
+RUN echo "Aggiornamento build 2026-06-13" 
+COPY pyproject.toml README.md LICENSE THIRD_PARTY_NOTICES.md hatch_build.py ./
+RUN mkdir -p nanobot bridge && touch nanobot/__init__.py && uv pip install --system --no-cache .
+
 # Install Python dependencies first (cached layer). Hatch reads the custom build
 # hook from hatch_build.py even for this metadata-only install.
 COPY pyproject.toml README.md LICENSE THIRD_PARTY_NOTICES.md hatch_build.py ./
